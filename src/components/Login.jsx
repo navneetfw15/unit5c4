@@ -1,17 +1,30 @@
 
 import { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { user } from '../Redux/actions';
+import axios from 'axios';
+import { login } from '../Redux/action';
 
 export const Login = () => {
-  const auth = useSelector((store)=>store.users);
   const[name,setName] = useState("");
   const [pass,setPass] =useState("");
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
-const handleAuth=()=>{
-  dispatch(user({name,pass}))
+const handleAuth=(e)=>{
+  e.preventDefault();
+  axios.get("http://localhost:8080/users").then((data)=>{
+    data.data.map((e)=>{
+      if(e.username === name && e.pass===pass){
+        dispatch(login({isAuth:true}));
+        if(e.role==="admin"){
+         return navigate("/orders"); 
+        }else{
+        return navigate("/neworder");
+        }
+      }
+    })
+  })
 }
   return (
     <div>
@@ -31,8 +44,7 @@ const handleAuth=()=>{
       />
       {/* On this button click make network req to find user with same username and password */}
       {/* get his role, if role is `admin` take him to `/orders` page otherwise take him to `/neworder` */}
-      {auth.role==="admin" ? <Navigate to="/orders"/> : <Navigate to="/neworder"/>}
-      <button className="submit" onClick={()=>{handleAuth}}>Login</button>
+      <button className="submit" onClick={(e)=>{handleAuth(e)}}>Login</button>
     </div>
   );
 };

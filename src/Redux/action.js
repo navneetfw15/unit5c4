@@ -1,18 +1,35 @@
 // action types
 import  axios  from 'axios';
 export const USER =  "USER";
+export const GET_TASK = "GET_TASK"
+export const SORT ="SORT"
+export const LOGOUT= "LOGOUT"
 
 // Action Creators
-export const user = (name,pass) => (dispatch) =>{
-    axios.get("http://localhost:8080/users",{
-        params:{username: name,
-          pass: pass}
-      }).then((x) => dispatch(setUser(x.data))).catch((err)=>console.log(err));
+
+export const login = (data) =>{
+    return{
+        type:USER,
+        payload:data,
+    }
 }
 
-export const setUser =(data) =>{
+export const logout=()=>{
+    return {
+        type:LOGOUT,
+    }
+}
+
+export const setData = (data) =>{
+    return {
+        type : GET_TASK,
+        payload: data
+    }
+}
+
+export const sort = (by) =>{
     return{
-        type : USER,
-        payload : data
+        type:SORT,
+        payload:by
     }
 }
